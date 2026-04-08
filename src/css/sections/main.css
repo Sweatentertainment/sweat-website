@@ -115,27 +115,33 @@
 
 .ntk-gsap-perspective-0 {
   transform: rotateY(-30deg);
+  will-change: transform;
 }
 
 .ntk-gsap-perspective-1 {
   transform: rotateY(30deg);
   text-align: right;
+  will-change: transform;
 }
 
 .ntk-gsap-perspective-2 {
   transform: rotateY(-30deg);
+  will-change: transform;
 }
 
 .ntk-gsap-perspective-3 {
   text-align: right;
+  will-change: transform;
 }
 
 .ntk-gsap-perspective-4 {
   text-align: right;
+  will-change: transform;
 }
 
 .ntk-gsap-perspective-5 {
   text-align: right;
+  will-change: transform;
 }
 
 .ntk--size-1 {

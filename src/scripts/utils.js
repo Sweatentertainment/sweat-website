@@ -11,6 +11,57 @@ const $holder4 = document.querySelector(".ntk-h-4");
 const $holder5 = document.querySelector(".ntk-h-5");
 const $holder6 = document.querySelector(".ntk-h-6");
 
+// --- Performance: shared animation loop ---
+// Instead of 7 separate rAF loops (one per artist) + 7 smoothAnimation loops,
+// we run a single rAF that ticks all active components. This cuts rAF overhead
+// from ~14 callbacks per frame down to 1.
+const activeComponents = [];
+const MAX_DPR = 1.5; // Cap pixel ratio to reduce GPU fill on retina displays
+
+function sharedAnimationLoop() {
+  requestAnimationFrame(sharedAnimationLoop);
+  const vh = window.innerHeight;
+  for (let i = 0; i < activeComponents.length; i++) {
+    const comp = activeComponents[i];
+    // Viewport culling — skip render if off-screen
+    const rect = comp.holder.getBoundingClientRect();
+    if (rect.bottom < 0 || rect.top > vh) continue;
+    // Lerp smooth mouse for mobile scroll
+    if (!comp._isMouseActive) {
+      comp.uMouse.y += (comp._scrollBasedY - comp.uMouse.y) * 0.1;
+    }
+    comp.customPass.uniforms.uMouse.value = comp.uMouse;
+    comp.composer.render();
+  }
+}
+// Start the single loop once
+requestAnimationFrame(sharedAnimationLoop);
+
+// --- Performance: single passive scroll handler shared by all components ---
+let _lastScrollY = window.scrollY;
+window.addEventListener("scroll", () => {
+  if (window.innerWidth > 990) return;
+  const currentScrollY = window.scrollY;
+  const scrollDelta = currentScrollY - _lastScrollY;
+  _lastScrollY = currentScrollY;
+  const vh = window.innerHeight;
+  const vw = window.innerWidth;
+
+  for (let i = 0; i < activeComponents.length; i++) {
+    const comp = activeComponents[i];
+    if (comp._isMouseActive) continue;
+    const rect = comp.holder.getBoundingClientRect();
+    if (rect.top < vh && rect.bottom > 0 && rect.left < vw && rect.right > 0) {
+      comp._scrollBasedY += scrollDelta * 0.001;
+      comp._scrollBasedY = Math.max(0, Math.min(1, comp._scrollBasedY));
+    } else {
+      comp._scrollBasedY = scrollDelta > 0 ? 0 : (scrollDelta < 0 ? 1 : comp._scrollBasedY);
+    }
+    comp.uMouse.y = comp._scrollBasedY;
+    comp.uMouse.x = comp._lastMouseX;
+  }
+}, { passive: true });
+
 
 class ImageCanvasComponent {
   constructor(imageElementId, holder, yOffset = 0) {
@@ -30,8 +81,14 @@ class ImageCanvasComponent {
     this.mesh = null;
     this.$img = document.getElementById(this.imageElementId);
 
+    // Shared state for cursor/scroll (replaces per-instance rAF loops)
+    this._isMouseActive = false;
+    this._scrollBasedY = 0.1;
+    this._lastMouseX = 0.5;
+    this._lastMouseY = 0.5;
+
     if (!this.$img) {
-      console.error(`3D Plane with ID "${this.imageElementId}" not found. Please check if all the images are loaded correctly.`);
+      console.error(`3D Plane with ID "${this.imageElementId}" not found.`);
       return;
     }
 
@@ -67,7 +124,12 @@ class ImageCanvasComponent {
     this.scene.add(this.mesh);
 
     this.toggleAnimations();
-    this.animation();
+    // Force an immediate first render so the chromatic aberration shader
+    // is visible straight away (not just on hover)
+    this.customPass.uniforms.uMouse.value = this.uMouse;
+    this.composer.render();
+    // Register with the shared loop for continuous updates
+    activeComponents.push(this);
   }
 
   toggleAnimations() {
@@ -81,6 +143,8 @@ class ImageCanvasComponent {
     this.camera.position.z = planeDistance;
 
     this.renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+    // Performance: cap pixel ratio — saves massive GPU fill on retina/HiDPI
+    this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, MAX_DPR));
     this.renderer.setSize(window.innerWidth, window.innerHeight);
     this.renderer.setClearColor(0x000000, 0);
     this.renderer.outputColorSpace = THREE.SRGBColorSpace;
@@ -140,86 +204,33 @@ class ImageCanvasComponent {
     };
   }
 
-  animation() {
-    requestAnimationFrame(() => this.animation());
-    const rect = this.holder.getBoundingClientRect();
-    if (rect.bottom < 0 || rect.top > window.innerHeight) return;
-    this.customPass.uniforms.uMouse.value = this.uMouse;
-    this.composer.render();
-  }
+  // No more per-instance animation() — handled by sharedAnimationLoop
 
   handleCursorAnimation() {
-    let isMouseActive = false;
-    let lastScrollY = window.scrollY;
-    let scrollDelta = 0; 
-    let scrollBasedY = 0.1; 
-    let lastMousePosition = new THREE.Vector2(0.5, 0.5); 
-  
+    // Mouse tracking (per-holder, lightweight event listeners)
     this.holder.addEventListener("mousemove", (e) => {
-      isMouseActive = true; 
+      this._isMouseActive = true;
       const rect = this.holder.getBoundingClientRect();
       this.uMouse.x = (e.clientX - rect.left) / rect.width;
       this.uMouse.y = 1 - (e.clientY - rect.top) / rect.height;
-      lastMousePosition.set(this.uMouse.x, this.uMouse.y); 
+      this._lastMouseX = this.uMouse.x;
+      this._lastMouseY = this.uMouse.y;
     });
-  
+
     this.holder.addEventListener("mouseleave", () => {
-      isMouseActive = false; 
-      this.uMouse.x = lastMousePosition.x;
-      this.uMouse.y = lastMousePosition.y;
+      this._isMouseActive = false;
+      this.uMouse.x = this._lastMouseX;
+      this.uMouse.y = this._lastMouseY;
     });
-  
-    window.addEventListener("scroll", () => {
-      if (window.innerWidth <= 990) { 
-        const currentScrollY = window.scrollY;
-        scrollDelta = currentScrollY - lastScrollY; 
-        lastScrollY = currentScrollY;
-    
-        const rect = this.holder.getBoundingClientRect();
-        if (
-          rect.top < window.innerHeight &&
-          rect.bottom > 0 &&
-          rect.left < window.innerWidth &&
-          rect.right > 0
-        ) {
-          if (!isMouseActive) {
-            scrollBasedY += scrollDelta * 0.001;
-            scrollBasedY = Math.max(0, Math.min(1, scrollBasedY));
-            this.uMouse.y = scrollBasedY;
-            this.uMouse.x = lastMousePosition.x; 
-          }
-        } else {
-          if (!isMouseActive) {
-            if (scrollDelta > 0) {
-              scrollBasedY = 0;
-            } else if (scrollDelta < 0) {
-              scrollBasedY = 1;
-            }
-            this.uMouse.y = scrollBasedY;
-            this.uMouse.x = lastMousePosition.x; 
-          }
-        }
-      }
-    });    
-  
-    const lerp = (start, end, t) => start * (1 - t) + end * t;
-  
-    const smoothAnimation = () => {
-      if (!isMouseActive) {
-        this.uMouse.y = lerp(this.uMouse.y, scrollBasedY, 0.1);
-      }
-      requestAnimationFrame(smoothAnimation);
-    };
-  
-    smoothAnimation();
+
+    // Scroll handling is now in the shared scroll listener above
   }
-  
 }
 
-const artist1 = new ImageCanvasComponent("texture-0", $holder0, -0.18);
-const artist2 = new ImageCanvasComponent("texture-1", $holder1);
-const artist3 = new ImageCanvasComponent("texture-2", $holder2);
-const artist4 = new ImageCanvasComponent("texture-3", $holder3);
-const artist5 = new ImageCanvasComponent("texture-4", $holder4);
-const artist6 = new ImageCanvasComponent("texture-5", $holder5, -0.18);
-const artist7 = new ImageCanvasComponent("texture-6", $holder6, -0.12);
+const artist1 = new ImageCanvasComponent("texture-0", $holder0, -0.18); // Blond:Ish (landscape)
+const artist2 = new ImageCanvasComponent("texture-1", $holder1, -0.18); // Disclosure (landscape, swapped from pos 5)
+const artist3 = new ImageCanvasComponent("texture-2", $holder2);        // Scout
+const artist4 = new ImageCanvasComponent("texture-3", $holder3);        // Rules
+const artist5 = new ImageCanvasComponent("texture-4", $holder4);        // Kid Apollo
+const artist6 = new ImageCanvasComponent("texture-5", $holder5);        // St Lundi (swapped from pos 1)
+const artist7 = new ImageCanvasComponent("texture-6", $holder6, -0.12); // Ethan Walsh

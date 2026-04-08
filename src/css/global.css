@@ -154,6 +154,7 @@ h2 {
   display: flex;
   justify-content: center;
   align-items: center;
+  will-change: top;
 }
 
 .ntk-curtain__gallery {
@@ -164,6 +165,7 @@ h2 {
   position: relative;
   background-color: #000000;
   border-radius: 5px;
+  will-change: height, transform;
 }
 
 .ntk-curtain__picture {
@@ -191,7 +193,7 @@ h2 {
 }
 
 .ntk-curtain__picture--1 {
-  background-image: url(/public/assets/images/artist__st-lundi.webp);
+  background-image: url(/public/assets/images/artist__disclosure.webp);
   z-index: 2;
 }
 

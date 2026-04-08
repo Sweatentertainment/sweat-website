@@ -79,7 +79,7 @@ const handleTimeline = () => {
   },
 });*/
 
-document.addEventListener("DOMContentLoaded", async () => {
+document.addEventListener("DOMContentLoaded", () => {
   linePathAnimation();
   maskedTextAnimation();
   handleDropdowns();
@@ -90,24 +90,26 @@ document.addEventListener("DOMContentLoaded", async () => {
     handleTimeline();
   }, 1500);
 
-  const canvas = document.getElementById("canvas3d");
-
-  if (canvas) {
+  // Performance: defer Spline 3D loading until after curtain animation completes
+  // (~5s after DOMContentLoaded). Spline runtime is heavy (~500KB+ JS + 3D scene),
+  // so loading it eagerly blocks the main thread during the intro animation.
+  const loadSpline = async () => {
+    const canvas = document.getElementById("canvas3d");
+    if (!canvas) return;
     try {
-      const [splineModule] = await Promise.all([import("@splinetool/runtime")]);
+      const splineModule = await import("@splinetool/runtime");
       const Application = splineModule.Application;
-
       const spline = new Application(canvas);
-
       await spline.load(
         "https://prod.spline.design/xhjvcXw3rWm4cd7r/scene.splinecode"
       );
     } catch (error) {
       console.error("Spline module error:", error);
     }
-  } else {
-    console.warn("No 3D Canvas found");
-  }
+  };
+
+  // Load after curtain animation is done (curtain takes ~4.5s total)
+  setTimeout(loadSpline, 5000);
 });
 
 /*const $hamburgerBtn = document.querySelector(".ntk-hamburger-menu__btn");
