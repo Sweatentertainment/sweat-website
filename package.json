@@ -1,0 +1,20 @@
+{
+  "name": "sweat-website",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "devDependencies": {
+    "vite": "^6.0.5"
+  },
+  "dependencies": {
+    "@splinetool/runtime": "^1.9.54",
+    "gsap": "^3.12.5",
+    "lenis": "^1.1.18",
+    "three": "^0.172.0"
+  }
+}

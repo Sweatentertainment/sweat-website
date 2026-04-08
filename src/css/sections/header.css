@@ -1,0 +1,94 @@
+header {
+  width: 100%;
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  position: relative;
+}
+
+header h1 {
+  color: #c9c7c7;
+  letter-spacing: -12px;
+  font-size: 11rem;
+  line-height: 10rem;
+  font-weight: 700;
+  z-index: 999;
+  transform: translateX(-20.5px);
+  margin-bottom: 20px;
+}
+
+.ntk-masked-text__section {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 0px 40px;
+  padding-bottom: 400px;
+}
+
+.ntk-masked-text__wrapper {
+  width: 100%;
+  max-width: 1600px;
+  display: flex;
+  align-items: flex-start;
+  justify-content: flex-start;
+}
+
+.ntk-masked-text__container {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.ntk-masked-text,
+.ntk-masked-text-footer {
+  overflow: hidden;
+}
+
+.ntk-text--scroller {
+  font-family: var(--manrope-font);
+  color: #b4b4b449;
+  font-size: 6rem;
+  display: inline-block;
+  filter: blur(10px);
+}
+
+.ntk-text--scroller--spacer {
+  opacity: 0;
+}
+
+.ntk-white-text--scroller {
+  color: #ffffffa5 !important;
+}
+
+@media (width <= 1200px) {
+  .ntk-text--scroller {
+    font-size: 4rem;
+  }
+}
+
+@media (width <= 990px) {
+  .ntk-masked-text__section {
+    padding: 200px 20px 400px 20px;
+  }
+}
+
+@media (width <= 768px) {
+  .ntk-text--scroller {
+    font-size: 2.5rem;
+  }
+
+  .ntk-masked-text__section {
+    padding: 300px 20px 400px 20px;
+  }
+}
+
+@media (width <= 480px) {
+  .ntk-masked-text__section {
+    padding: 150px 20px 200px 20px;
+    margin-top: 200px;
+  }
+}

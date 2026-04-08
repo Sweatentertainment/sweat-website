@@ -1,0 +1,12 @@
+/* TEAM */
+Design & Development: Neatika (https://neatika.com)
+Collaborators: @dianavodopivec, @matiasecharri
+
+/* SITE */
+Project: Sweat Strategies
+Role: Artist Growth Platform / Marketing Hub
+Standards: HTML5, CSS3, JavaScript, BEM, Responsive Design
+Animations: GSAP, Canvas 3D, SVG
+
+/* THANKS */
+All featured artists and supporters of the project.

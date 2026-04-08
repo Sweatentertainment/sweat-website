@@ -1,0 +1,4 @@
+User-agent: *
+Disallow:
+
+Sitemap: https://sweatstrategies.com/sitemap.xml

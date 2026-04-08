@@ -1,0 +1,80 @@
+.ntk-marquee-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  background: #02081100;
+  font-family: "Manrope";
+  position: absolute;
+  bottom: -40px;
+  z-index: 20;
+  background-color:  #02081100;
+  user-select: none;
+  cursor: pointer;
+}
+
+.ntk-container-marquee {
+  max-width: 2000px;
+  height: 16rem;
+  display: flex;
+  align-items: center;
+  overflow: hidden;
+  background: #02081100;
+  position: relative;
+  z-index: -1;
+}
+
+.ntk-container-marquee::after {
+  content: "";
+  width: 150px;
+  height: 100%;
+  position: absolute;
+  left: 0;
+  top: 0;
+  background-color: #000000;
+  z-index: 8;
+  mask-image: linear-gradient(to left, rgba(0, 0, 0, 0), #000000);
+}
+
+.ntk-container-marquee::before {
+  content: "";
+  width: 150px;
+  height: 100%;
+  position: absolute;
+  right: 0;
+  top: 0;
+  background-color: #000000;
+  z-index: 8;
+  mask-image: linear-gradient(to right, rgba(0, 0, 0, 0), #000000);
+}
+
+.ntk-container-marquee .text {
+  display: inline-block;
+  font-size: 8.5rem;
+  white-space: nowrap;
+  color: #0c54b8;
+  animation: marqueeText 300s linear infinite;
+  letter-spacing: 0.33px;
+}
+
+@keyframes marqueeText {
+  0% {
+    transform: translate(0, 0);
+  }
+  100% {
+    transform: translate(-100%, 0);
+  }
+}
+
+@media (width <= px) {
+  .ntk-container-marquee {
+    height: 54px;
+  }
+
+  .ntk-container-marquee .text {
+    font-size: 18px;
+    line-height: 109px;
+    letter-spacing: 0.18px;
+  }
+}
+

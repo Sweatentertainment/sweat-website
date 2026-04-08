@@ -1,0 +1,243 @@
+@import url("/src/css/sections/cursor.css");
+@import url("/src/css/sections/header.css");
+@import url("/src/css/sections/nav.css");
+@import url("/src/css/sections/marquee.css");
+@import url("/src/css/sections/main.css");
+@import url("/src/css/sections/faq.css");
+@import url("/src/css/sections/footer.css");
+
+@font-face {
+  font-family: "Manrope";
+  src: url("/assets/fonts/Manrope/Manrope-VariableFont_wght.ttf")
+    format("truetype");
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+:root {
+  --primary-bckg-c: #020811;
+  --primary-bckg-c: #000000;
+  --secondary-bckg-c: #ffff;
+  --manrope-font: "Manrope";
+  --primary-font-color: #fff;
+  --secondary-font-color: #c9c7c7;
+}
+
+::-webkit-scrollbar {
+  width: 5px;
+  height: 5px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #9b9b9b5e;
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #c5c5c5;
+}
+
+::selection {
+  background-color: #0f65dd;
+  color: #ffffff;
+}
+
+body {
+  background-color: var(--primary-bckg-c);
+  overflow-y: hidden;
+  overflow-x: hidden;
+  position: relative;
+}
+
+h1 {
+  font-family: var(--manrope-font);
+  font-size: 11rem;
+  color: var(--primary-font-color);
+  font-weight: 800;
+  text-align: center;
+  line-height: 1;
+}
+
+h2 {
+  font-family: var(--manrope-font);
+  color: var(--secondary-font-color);
+  font-size: 2rem;
+}
+
+.ntk-svg-wrapper {
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  left: 0;
+  top: 0;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  z-index: -1;
+  opacity: 0.5;
+}
+
+.ntk-svg-wrapper__dimensions {
+  height: calc(100% - 52vh);
+  transform: translateY(52vh);
+  padding-top: 90px;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  position: relative;
+}
+
+.ntk-svg-wrapper__dimensions::after {
+  content: "";
+  position: absolute;
+  top: 80px;
+  left: 0;
+  width: 100%;
+  height: 170px;
+  z-index: 10;
+  background-color: rgba(255, 255, 0, 0);
+  background-image: linear-gradient(360deg, #ffffff00 0%, #000000 70%);
+}
+
+.ntk-svg-wrapper__float {
+  width: 100vw;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+
+.ntk-svg-wrapper__dimensions svg {
+  width: 100%;
+  height: 100%;
+  stroke: #86868664;
+  position: absolute;
+}
+
+#canvas3d {
+  width: 300px;
+  top: 0;
+  left: 0;
+  transform: translateY(-25px);
+}
+
+.ntk-bckg-square {
+  height: 250px;
+  width: 250px;
+  position: absolute;
+  right: 0;
+  bottom: 0px;
+  background-color: #000000;
+  z-index: 99;
+  pointer-events: none;
+}
+
+.ntk-curtain {
+  width: 100%;
+  height: 100%;
+  position: fixed;
+  background-color: #000000;
+  cursor: wait;
+  z-index: 99999;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.ntk-curtain__gallery {
+  display: flex;
+  width: 450px;
+  height: 0%;
+  overflow: hidden;
+  position: relative;
+  background-color: #000000;
+  border-radius: 5px;
+}
+
+.ntk-curtain__picture {
+  width: 100%;
+  height: 100%;
+  background-size: cover;
+  background-repeat: no-repeat;
+  position: absolute;
+  background-position: center;
+  bottom: -100%;
+  /* filter: brightness(0.4); */
+  background-color: #000000;
+}
+
+.ntk-curtain__picture--0 {
+  background-image: url(/public/assets/images/artist__scout-compress.webp);
+  width: 100%;
+  height: 100%;
+  background-size: cover;
+  background-repeat: no-repeat;
+  position: absolute;
+  background-position: center;
+  bottom: 0%;
+  /* filter: brightness(0.3); */
+}
+
+.ntk-curtain__picture--1 {
+  background-image: url(/public/assets/images/artist__st-lundi.webp);
+  z-index: 2;
+}
+
+.ntk-curtain__picture--2 {
+  background-image: url(/public/assets/images/artist__blondish.webp);
+  z-index: 3;
+}
+
+.ntk-curtain__picture--3 {
+  background-image: url(/public/assets/images/artist__the-knocks-compress.webp);
+  z-index: 4;
+}
+
+.ntk-curtain__picture--4 {
+  background-image: url(/public/assets/images/artist__kid-apollo-compress.webp);
+  z-index: 5;
+}
+
+@media (width <= 990px) {
+  body {
+    overflow-y: visible;
+  }
+}
+
+@media (width <= 768px) {
+  .ntk-bckg-square {
+    height: 150px;
+    width: 200px;
+    position: absolute;
+    right: 0;
+    bottom: 20px;
+  }
+}
+
+@media (width <= 480px) {
+  .ntk-bckg-square {
+    height: 150px;
+    width: 180px;
+    position: absolute;
+    right: 0px;
+    bottom: 20px;
+  }
+
+  .ntk-curtain__gallery {
+    height: 250px;
+    width: 250px;
+  }
+}
+
