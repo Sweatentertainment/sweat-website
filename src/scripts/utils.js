@@ -13,9 +13,10 @@ const $holder6 = document.querySelector(".ntk-h-6");
 
 
 class ImageCanvasComponent {
-  constructor(imageElementId, holder) {
+  constructor(imageElementId, holder, yOffset = 0) {
     this.holder = holder;
     this.imageElementId = imageElementId;
+    this.yOffset = yOffset;
     this.uMouse = new THREE.Vector2(0, 0);
     this.texture = null;
     this.camera = null;
@@ -61,6 +62,7 @@ class ImageCanvasComponent {
       map: this.texture,
     });
     this.mesh = new THREE.Mesh(this.geometry, this.material);
+    this.mesh.position.y = this.yOffset;
     this.scene = new THREE.Scene();
     this.scene.add(this.mesh);
 
@@ -81,7 +83,7 @@ class ImageCanvasComponent {
     this.renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
     this.renderer.setSize(window.innerWidth, window.innerHeight);
     this.renderer.setClearColor(0x000000, 0);
-    this.renderer.outputEncoding = THREE.sRGBEncoding;
+    this.renderer.outputColorSpace = THREE.SRGBColorSpace;
     this.holder.appendChild(this.renderer.domElement);
 
     this.composer = new EffectComposer(this.renderer);
@@ -139,8 +141,10 @@ class ImageCanvasComponent {
   }
 
   animation() {
-    this.customPass.uniforms.uMouse.value = this.uMouse;
     requestAnimationFrame(() => this.animation());
+    const rect = this.holder.getBoundingClientRect();
+    if (rect.bottom < 0 || rect.top > window.innerHeight) return;
+    this.customPass.uniforms.uMouse.value = this.uMouse;
     this.composer.render();
   }
 
@@ -212,10 +216,10 @@ class ImageCanvasComponent {
   
 }
 
-const artist1 = new ImageCanvasComponent("texture-0", $holder0);
+const artist1 = new ImageCanvasComponent("texture-0", $holder0, -0.18);
 const artist2 = new ImageCanvasComponent("texture-1", $holder1);
 const artist3 = new ImageCanvasComponent("texture-2", $holder2);
 const artist4 = new ImageCanvasComponent("texture-3", $holder3);
 const artist5 = new ImageCanvasComponent("texture-4", $holder4);
-const artist6 = new ImageCanvasComponent("texture-5", $holder5);
-const artist7 = new ImageCanvasComponent("texture-6", $holder6)
+const artist6 = new ImageCanvasComponent("texture-5", $holder5, -0.18);
+const artist7 = new ImageCanvasComponent("texture-6", $holder6, -0.12);

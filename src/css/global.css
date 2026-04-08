@@ -179,7 +179,7 @@ h2 {
 }
 
 .ntk-curtain__picture--0 {
-  background-image: url(/public/assets/images/artist__scout-compress.webp);
+  background-image: url(/public/assets/images/artist__blondish.webp);
   width: 100%;
   height: 100%;
   background-size: cover;
@@ -196,7 +196,7 @@ h2 {
 }
 
 .ntk-curtain__picture--2 {
-  background-image: url(/public/assets/images/artist__blondish.webp);
+  background-image: url(/public/assets/images/artist__scout-compress.webp);
   z-index: 3;
 }
 

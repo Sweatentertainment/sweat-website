@@ -11,18 +11,10 @@ import { linePathAnimation } from "./src/scripts/pathLine.js";
 
 const initLenis = () => {
   const lenis = new Lenis({
-    lerp: 0.05,
+    lerp: 0.1,
     smoothWheel: true,
-    wheelMultiplier: 1,
+    wheelMultiplier: 1.2,
   });
-
-  const customScroll = (e) => {
-    e.preventDefault();
-
-    lenis.scrollTo(lenis.scroll + (e.deltaY > 0 ? 240 : -240));
-  };
-
-  window.addEventListener("wheel", customScroll, { passive: false });
 
   const raf = (time) => {
     lenis.raf(time);
